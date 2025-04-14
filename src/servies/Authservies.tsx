@@ -31,7 +31,7 @@ export const authService = {
     try {
       const response = await api.post('/login', { username, password });
       if (response.data.token) {
-        localStorage.setItem('authToken', response.data.token);
+        sessionStorage.setItem('authToken', response.data.token);
       }
       return response.data;
     } catch (error) {
@@ -41,9 +41,10 @@ export const authService = {
   },
 
   // Register new user
-  async register(username: string, email: string, password: string) {
+  async register(name: string,username: string, email: string, password: string) {
     try {
       const response = await api.post('/signup', { 
+        name,
         username, 
         email, 
         password 
@@ -61,11 +62,11 @@ export const authService = {
 
   // Check if user is authenticated
   isAuthenticated() {
-    return !!localStorage.getItem('authToken');
+    return !!sessionStorage.getItem('authToken');
   },
 
   // Logout user
   logout() {
-    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
   }
 };

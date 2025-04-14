@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import axios from 'axios';
 
 const API_URL = 'https://defdb.wlan0.in/api';
+
+// Password validation function
+const validatePassword = (password: string): { isValid: boolean; message: string } => {
+  if (password.length < 8) {
+    return { isValid: false, message: 'Password must be at least 8 characters long' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { isValid: false, message: 'Password must contain at least one number' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { isValid: false, message: 'Password must contain at least one uppercase letter' };
+  }
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    return { isValid: false, message: 'Password must contain at least one special character' };
+  }
+  return { isValid: true, message: '' };
+};
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,7 +32,6 @@ const Auth: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login } = useAuth();
-  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const handleToggle = () => {
@@ -78,7 +93,12 @@ const Auth: React.FC = () => {
     e.preventDefault();
 
     if (!name.trim()) {
-      setError('name is required');
+      setError('Name is required');
+      return;
+    }
+    
+    if (/\d/.test(name)) {
+      setError('Name should not contain numbers');
       return;
     }
     
@@ -94,6 +114,13 @@ const Auth: React.FC = () => {
     
     if (!password.trim()) {
       setError('Password is required');
+      return;
+    }
+    
+    // Password validation
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message);
       return;
     }
     
@@ -125,7 +152,7 @@ const Auth: React.FC = () => {
       // Handle different error scenarios
       if (err.response) {
         // Server responded with an error status
-        setError(err.response.data.message || 'Registration failed. Please try different credentials.');
+        setError(err.response.data.message || 'Registration failed. Please try different username.');
       } else if (err.request) {
         // Request was made but no response
         setError('Server not responding. Please try again later.');
@@ -141,7 +168,7 @@ const Auth: React.FC = () => {
   return (
     <div className=" flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto min-w-[500px] min-h-[1000px]">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:min-w-[500px] md:min-h-[1000px]">
         <div className="w-full bg-white dark:bg-gray-800 rounded-lg shadow sm:max-w-md lg:max-w-xl p-6 space-y-6">
           {/* Auth Type Toggle */}
           <div className="flex border-b border-gray-200 dark:border-gray-700">
@@ -321,11 +348,6 @@ const Auth: React.FC = () => {
               {isLogin ? "Sign up" : "Sign in"}
             </button>
           </div>
-        </div>
-        
-        {/* Theme indicator */}
-        <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
-          Current theme: <span className="font-medium">{theme === 'dark' ? 'Dark' : 'Light'} mode</span>
         </div>
       </div>
     </div>

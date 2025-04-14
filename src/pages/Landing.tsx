@@ -12,7 +12,7 @@ const developers = [
     },
     {
       name: "Joel Anto",
-      role: "Front end Developer",
+      role: "Frontend Developer",
       image: "https://avatars.githubusercontent.com/u/166975150",
       github: "https://github.com/thelostleo",
       linkedin: "https://linkedin.com/in/joelanto2005"
