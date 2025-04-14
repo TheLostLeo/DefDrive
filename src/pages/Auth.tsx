@@ -70,7 +70,7 @@ const Auth: React.FC = () => {
       
       // Use your existing login function from context
       login(user.username);
-      navigate('/');
+      navigate('/share');
     } catch (err: any) {
       console.error('Login error:', err);
       // Handle different error scenarios
@@ -146,7 +146,7 @@ const Auth: React.FC = () => {
       
       login(user.username);
       
-      navigate('/');
+      setIsLogin(true);
     } catch (err: any) {
       console.error('Registration error:', err);
       // Handle different error scenarios

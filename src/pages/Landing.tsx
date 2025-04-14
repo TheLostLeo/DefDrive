@@ -47,12 +47,14 @@ const Landing: React.FC = () => {
                     </Link>
                   </div>
                   <div className="mt-3 mx-3 sm:mt-0 sm:ml-3 inline-flex rounded-md shadow ">
-                    <Link
-                      to="/Documents"
+                    <a
+                      href="https://github.com/ankitprasad2005/defdrive"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-gray-800 hover:bg-blue-200 dark:hover:bg-gray-700 md:py-4 md:text-lg md:px-10"
                     >
                       Learn more
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

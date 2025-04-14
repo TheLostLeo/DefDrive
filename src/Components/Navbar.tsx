@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,8 +7,19 @@ const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const { isLoggedIn, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-
+  const handleLogout = () => {
+    // Call the existing logout function from AuthContext
+    logout();
+    
+    // Clear auth tokens from storage
+    sessionStorage.removeItem('authToken');
+    localStorage.removeItem('authToken');
+    
+    // Navigate to the home page
+    navigate('/');
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
@@ -53,7 +64,7 @@ const Navbar: React.FC = () => {
             {/* Auth buttons (login/signup or sign out) */}
             {isLoggedIn ? (
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium"
               >
                 Sign Out
@@ -136,7 +147,7 @@ const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <div className="space-y-1">
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="block w-full text-left pl-3 pr-4 py-2 text-base font-medium text-white bg-red-600 hover:bg-red-700"
                 >
                   Sign out
