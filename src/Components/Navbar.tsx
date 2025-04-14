@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
               <Link to="/" className="border-transparent text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white inline-flex items-center px-1 pt-1 text-sm font-medium">
                 Home
               </Link>
-              {isLoggedIn && (<Link to="/share" className="border-transparent text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white inline-flex items-center px-1 pt-1 text-sm font-medium">
+              {isLoggedIn && (<Link to="share" className="border-transparent text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white inline-flex items-center px-1 pt-1 text-sm font-medium">
                   Share Files
                 </Link>
               )}
@@ -71,10 +71,10 @@ const Navbar: React.FC = () => {
               </button>
             ) : (
               <div className="flex space-x-4">
-                <Link to="/Auth" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                <Link to="Auth" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   Login
                 </Link>
-                <Link to="/Auth" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                <Link to="Auth" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                   Sign Up
                 </Link>
               </div>
@@ -134,7 +134,7 @@ const Navbar: React.FC = () => {
             </Link>
             {isLoggedIn && (
               <Link
-                to="/share"
+                to="share"
                 className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Share Files
@@ -156,13 +156,13 @@ const Navbar: React.FC = () => {
             ) : (
               <div className="flex items-center px-4 space-x-3">
                 <Link
-                  to="/Auth"
+                  to="Auth"
                   className="block text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium"
                 >
                   Login
                 </Link>
                 <Link
-                  to="/Auth"
+                  to="Auth"
                   className="block bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-base font-medium"
                 >
                   Sign Up
