@@ -15,7 +15,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   useEffect(() => {
     // Check if user is logged in from localStorage
-    const savedUser = localStorage.getItem('user');
+    const savedUser = sessionStorage.getItem('user');
     if (savedUser) {
       try {
         const parsedUser = JSON.parse(savedUser);
@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUsername(parsedUser.username);
       } catch (error) {
         console.error('Error parsing user data:', error);
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
       }
     }
   }, []);
@@ -31,13 +31,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (username: string) => {
     setIsLoggedIn(true);
     setUsername(username);
-    localStorage.setItem('user', JSON.stringify({ username }));
+    sessionStorage.setItem('user', JSON.stringify({ username }));
   };
   
   const logout = () => {
     setIsLoggedIn(false);
     setUsername(null);
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
   };
   
   return (

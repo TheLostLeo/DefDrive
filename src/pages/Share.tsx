@@ -855,14 +855,14 @@ const SharePage: React.FC = () => {
                                     type="button"
                                     onClick={() => toggleAccessActive(file.id, access.id)}
                                     className={`p-1.5 rounded transition-colors ${
-                                      access.isActive 
+                                      access.public 
                                         ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
                                         : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                                     }`}
                                     aria-label={access.isActive ? 'Deactivate' : 'Activate'}
                                     title={access.isActive ? 'Active - Click to deactivate' : 'Inactive - Click to activate'}
                                   >
-                                    {access.isActive ? <FiToggleRight size={18} /> : <FiToggleLeft size={18} />}
+                                    {access.public ? <FiToggleRight size={18} /> : <FiToggleLeft size={18} />}
                                   </button>
                                   
                                   {/* Copy link button */}
