@@ -714,10 +714,10 @@ const SharePage: React.FC = () => {
           {/* Files table */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
             {/* Table header */}
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-12 gap-4 font-medium text-gray-600 dark:text-gray-300">
-              <div className="col-span-6">File Name</div>
-              <div className="col-span-3">Size</div>
-              <div className="col-span-3">Actions</div>
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-12 gap-2 sm:gap-4 font-medium text-gray-600 dark:text-gray-300">
+              <div className="col-span-7 md:col-span-6 pl-1">File Name</div>
+              <div className="hidden sm:block col-span-3">Size</div>
+              <div className="col-span-5 sm:col-span-3 text-right sm:text-left">Actions</div>
             </div>
             
             {/* Loading state */}
@@ -738,19 +738,19 @@ const SharePage: React.FC = () => {
                 filteredFiles.map(file => (
                   <div key={file.id} className="border-b border-gray-200 dark:border-gray-700 last:border-0">
                     {/* Main file row */}
-                    <div className="px-6 py-4 grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-6 font-medium text-gray-800 dark:text-gray-200">
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                      <div className="col-span-7 md:col-span-6 font-medium text-gray-800 dark:text-gray-200 truncate pl-1">
                         {file.name}
                       </div>
-                      <div className="col-span-3 text-gray-600 dark:text-gray-400">
+                      <div className="hidden sm:block col-span-3 text-gray-600 dark:text-gray-400">
                         {formatFileSize(file.size)}
                       </div>
-                      <div className="col-span-3 flex items-center space-x-2">
+                      <div className="col-span-5 sm:col-span-3 flex items-center justify-end sm:justify-start space-x-1 sm:space-x-2">
                         {/* Toggle access button */}
                         <button
                           type="button"
                           onClick={() => toggleFileAccess(file.id)}
-                          className={`p-2 rounded-lg transition-colors ${
+                          className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
                             file.isPublic 
                               ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
                               : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
@@ -758,44 +758,44 @@ const SharePage: React.FC = () => {
                           aria-label={file.isPublic ? 'Make private' : 'Make public'}
                           title={file.isPublic ? 'Public - Click to make private' : 'Private - Click to make public'}
                         >
-                          {file.isPublic ? <FiToggleRight size={20} /> : <FiToggleLeft size={20} />}
+                          {file.isPublic ? <FiToggleRight size={18} className="sm:w-5 sm:h-5" /> : <FiToggleLeft size={18} className="sm:w-5 sm:h-5" />}
                         </button>
                         
                         {/* Delete button */}
                         <button
                           type="button"
                           onClick={() => deleteFile(file.id)}
-                          className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
+                          className="p-1.5 sm:p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
                           aria-label="Delete file"
                           title="Delete file"
                         >
-                          <FiTrash2 size={20} />
+                          <FiTrash2 size={18} className="sm:w-5 sm:h-5" />
                         </button>
                         
                         {/* Expand/collapse button */}
                         <button
                           type="button"
                           onClick={() => toggleAccessRow(file.id)}
-                          className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
+                          className="p-1.5 sm:p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
                           aria-label={expandedFileId === file.id ? 'Hide access options' : 'Show access options'}
                           title="Access options"
                         >
-                          {expandedFileId === file.id ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+                          {expandedFileId === file.id ? <FiChevronUp size={18} className="sm:w-5 sm:h-5" /> : <FiChevronDown size={18} className="sm:w-5 sm:h-5" />}
                         </button>
                       </div>
                     </div>
                     
                     {/* Access sub-table */}
                     {expandedFileId === file.id && (
-                      <div className="bg-gray-50 dark:bg-gray-800 px-6 py-4 ml-8 mr-4 mb-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                      <div className="bg-gray-50 dark:bg-gray-800 px-3 sm:px-6 py-3 sm:py-4 mx-2 sm:ml-8 sm:mr-4 mb-3 sm:mb-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 space-y-2 sm:space-y-0">
+                          <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">
                             Access Controls
                           </h3>
                           <button
                             type="button"
                             onClick={() => openAddAccessModal(file.id)}
-                            className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                            className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm w-full sm:w-auto justify-center sm:justify-start"
                           >
                             <FiPlus className="mr-1" /> Add Access
                           </button>
@@ -807,8 +807,8 @@ const SharePage: React.FC = () => {
                           </div>
                         ) : (
                           <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-                            {/* Access table header */}
-                            <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300">
+                            {/* Access table header - visible only on tablet and larger */}
+                            <div className="hidden sm:grid grid-cols-12 gap-4 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300">
                               <div className="col-span-4">Name</div>
                               <div className="col-span-5">Configuration</div>
                               <div className="col-span-3">Actions</div>
@@ -818,12 +818,12 @@ const SharePage: React.FC = () => {
                             {file.accesses.map(access => (
                               <div 
                                 key={access.id} 
-                                className="grid grid-cols-12 gap-4 px-4 py-3 items-center border-t border-gray-200 dark:border-gray-700 text-sm"
+                                className="sm:grid grid-cols-12 gap-4 px-3 sm:px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-sm flex flex-col sm:items-center"
                               >
-                                <div className="col-span-4 font-medium text-gray-800 dark:text-gray-200">
+                                <div className="col-span-4 font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-0">
                                   {access.name}
                                 </div>
-                                <div className="col-span-5 text-gray-600 dark:text-gray-400">
+                                <div className="col-span-5 text-gray-600 dark:text-gray-400 mb-3 sm:mb-0">
                                   <div className="space-y-1">
                                     <div className="flex items-center">
                                       <FiGlobe className="mr-1 flex-shrink-0" />
@@ -849,7 +849,7 @@ const SharePage: React.FC = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="col-span-3 flex items-center space-x-2">
+                                <div className="col-span-3 flex items-center space-x-2 justify-start sm:justify-start">
                                   {/* Toggle access button */}
                                   <button
                                     type="button"
@@ -859,8 +859,8 @@ const SharePage: React.FC = () => {
                                         ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
                                         : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                                     }`}
-                                    aria-label={access.isActive ? 'Deactivate' : 'Activate'}
-                                    title={access.isActive ? 'Active - Click to deactivate' : 'Inactive - Click to activate'}
+                                    aria-label={access.public ? 'Make private' : 'Make public'}
+                                    title={access.public ? 'Public - Click to make private' : 'Private - Click to make public'}
                                   >
                                     {access.public ? <FiToggleRight size={18} /> : <FiToggleLeft size={18} />}
                                   </button>
