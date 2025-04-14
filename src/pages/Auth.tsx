@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import axios from 'axios';
+
+const API_URL = 'https://defdb.wlan0.in/api';
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState<string>(isLogin ? '' : '');
+  const [name, setname] = useState<string>(''); 
+  const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
-
   const handleToggle = () => {
     setIsLogin(!isLogin);
-    setError('');     
+    setError('');
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setEmail('');
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!username.trim()) {
@@ -33,13 +41,46 @@ const Auth: React.FC = () => {
       return;
     }
     
-    // For this demo, accept any password
-    login(username);
-    navigate('/');
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      // Make a POST request to your backend login endpoint
+      const response = await axios.post(`${API_URL}/login`, {
+        username,
+        password
+      });
+      const { token, user } = response.data;
+      sessionStorage.setItem('authToken', token);
+      
+      // Use your existing login function from context
+      login(user.username);
+      navigate('/');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      // Handle different error scenarios
+      if (err.response) {
+        // Server responded with an error status
+        setError(err.response.data.message || 'Login failed. Please check your credentials.');
+      } else if (err.request) {
+        // Request was made but no response
+        setError('Server not responding. Please try again later.');
+      } else {
+        // Something else went wrong
+        setError('An error occurred during login.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignupSubmit = (e: React.FormEvent) => {
+  const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name.trim()) {
+      setError('name is required');
+      return;
+    }
     
     if (!username.trim()) {
       setError('Username is required');
@@ -61,11 +102,41 @@ const Auth: React.FC = () => {
       return;
     }
     
-    // For this demo, simply log them in after signup
-    login(username);
-    navigate('/');
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      // Make a POST request to your backend register endpoint
+      const response = await axios.post(`${API_URL}/signup`, {
+        name,
+        username,
+        email,
+        password
+      });
+      
+      // Extract user data and token from response
+      const {user} = response.data;
+      
+      login(user.username);
+      
+      navigate('/');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      // Handle different error scenarios
+      if (err.response) {
+        // Server responded with an error status
+        setError(err.response.data.message || 'Registration failed. Please try different credentials.');
+      } else if (err.request) {
+        // Request was made but no response
+        setError('Server not responding. Please try again later.');
+      } else {
+        // Something else went wrong
+        setError('An error occurred during registration.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
-
 
   return (
     <div className=" flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -76,6 +147,7 @@ const Auth: React.FC = () => {
           <div className="flex border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => isLogin || handleToggle()}
+              type="button"
               className={`px-4 py-2 w-1/2 text-center ${
                 isLogin 
                   ? 'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-medium' 
@@ -86,6 +158,7 @@ const Auth: React.FC = () => {
             </button>
             <button
               onClick={() => !isLogin || handleToggle()}
+              type="button"
               className={`px-4 py-2 w-1/2 text-center ${
                 !isLogin 
                   ? 'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-medium' 
@@ -123,6 +196,7 @@ const Auth: React.FC = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   placeholder="Enter your username"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -137,36 +211,35 @@ const Auth: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   placeholder="••••••••"
+                  disabled={isLoading}
                 />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="remember"
-                      aria-describedby="remember"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-400">Remember me</label>
-                  </div>
-                </div>
-                <a href="#" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                  Forgot password?
-                </a>
               </div>
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-                Sign in
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
             </form>
           ) : (
             // Signup Form
             <form className="space-y-4" onSubmit={handleSignupSubmit}>
+              <div>
+                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name-signup"
+                  value={name}
+                  onChange={(e) => setname(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="Give your name"
+                  disabled={isLoading}
+                />
+              </div>
               <div>
                 <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Username
@@ -179,6 +252,7 @@ const Auth: React.FC = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   placeholder="Choose a username"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -192,7 +266,8 @@ const Auth: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="name@company.com"
+                  placeholder="name@gamil.com"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -207,6 +282,7 @@ const Auth: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   placeholder="••••••••"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -221,13 +297,15 @@ const Auth: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   placeholder="••••••••"
+                  disabled={isLoading}
                 />
               </div>
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-                Create an account
+                {isLoading ? 'Creating account...' : 'Create an account'}
               </button>
             </form>
           )}
@@ -236,7 +314,9 @@ const Auth: React.FC = () => {
             {isLogin ? "Don't have an account yet? " : "Already have an account? "}
             <button 
               onClick={handleToggle}
+              type="button"
               className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+              disabled={isLoading}
             >
               {isLogin ? "Sign up" : "Sign in"}
             </button>
