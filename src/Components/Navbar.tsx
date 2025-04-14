@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { isLoggedIn, username, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
@@ -60,10 +60,10 @@ const Navbar: React.FC = () => {
               </button>
             ) : (
               <div className="flex space-x-4">
-                <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                <Link to="/Auth" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   Login
                 </Link>
-                <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                <Link to="/Auth" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                   Sign Up
                 </Link>
               </div>
@@ -145,13 +145,13 @@ const Navbar: React.FC = () => {
             ) : (
               <div className="flex items-center px-4 space-x-3">
                 <Link
-                  to="/login"
+                  to="/Auth"
                   className="block text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium"
                 >
                   Login
                 </Link>
                 <Link
-                  to="/signup"
+                  to="/Auth"
                   className="block bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-base font-medium"
                 >
                   Sign Up
