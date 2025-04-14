@@ -87,7 +87,7 @@ const SharePage: React.FC = () => {
   useEffect(() => {
     if (!isLoggedIn) {
       addToast('Please login to access the Share Files page', 'info');
-      navigate('/Auth');
+      navigate('/');
     }
   }, [isLoggedIn, navigate]);
   
