@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiUpload, FiTrash2, FiCopy, FiChevronDown, FiChevronUp, FiPlus, FiToggleLeft, FiToggleRight, FiEdit, FiClock, FiGlobe, FiShield, FiCalendar, FiSearch, FiAlertCircle, FiInfo, FiCheck } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
 import AccessModal, { Access } from '../Components/AccessModal';
 import Navbar from '../Components/Navbar';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 // Define API URL - replace with your actual backend URL
 const API_URL = 'https://defdb.wlan0.in/api';
@@ -74,8 +74,6 @@ const SharePage: React.FC = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingAccess, setIsFetchingAccess] = useState<boolean>(false);
-  
-  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,13 +81,6 @@ const SharePage: React.FC = () => {
   const [currentFileId, setCurrentFileId] = useState<string | null>(null);
   const [editingAccess, setEditingAccess] = useState<Access | undefined>(undefined);
   
-  // Check authentication and redirect if not logged in
-  useEffect(() => {
-    if (!isLoggedIn) {
-      addToast('Please login to access the Share Files page', 'info');
-      navigate('/');
-    }
-  }, [isLoggedIn, navigate]);
   
   // Get auth token from session storage
   const getAuthToken = (): string | null => {
@@ -617,75 +608,313 @@ const SharePage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
             Shared Files
           </h1>
-          
-          <div className="mb-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start">
-            {/* Upload button and progress */}
-            <div className="w-full sm:w-auto">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              
-              <button
-                onClick={handleFileUpload}
-                disabled={isUploading}
-                className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 w-full sm:w-auto"
-              >
-                <FiUpload className="mr-2" />
-                {isUploading ? 'Uploading...' : 'Upload File'}
-              </button>
-              
-              {/* Upload progress bar */}
-              {isUploading && (
-                <div className="mt-2">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div 
-                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
-                      style={{ width: `${uploadProgress}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {uploadProgress}% complete
-                  </p>
-                </div>
-              )}
-              
-              {/* Upload error message */}
-              {uploadError && (
-                <div className="mt-2 text-sm text-red-600 dark:text-red-400">
-                  {uploadError}
-                </div>
-              )}
-            </div>
-            
-            {/* Search bar */}
-            <div className="flex-1 w-full">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <FiSearch className="text-gray-500 dark:text-gray-400" />
-                </div>
-                <input 
-                  type="search" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search files..." 
-                  className="block w-full p-3 pl-10 text-sm bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  >
-                    <span className="text-gray-500 dark:text-gray-400">&times;</span>
-                  </button>
-                )}
+        
+          {!isLoggedIn ? (
+            // Show login prompt when user is not logged in
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+              <div className="px-6 py-12 text-center">
+                <FiAlertCircle className="mx-auto h-16 w-16 text-blue-500 mb-4" />
+                <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+                  Please Log In
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  You need to be logged in to view and manage your shared files.
+                </p>
+                <Link to="/auth" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Login
+                </Link>
               </div>
             </div>
-          </div>
-          
+          ) : (
+            <>
+              <div className="mb-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start">
+                {/* Upload button and progress */}
+                <div className="w-full sm:w-auto">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  
+                  <button
+                    onClick={handleFileUpload}
+                    disabled={isUploading}
+                    className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 w-full sm:w-auto"
+                  >
+                    <FiUpload className="mr-2" />
+                    {isUploading ? 'Uploading...' : 'Upload File'}
+                  </button>
+                  
+                  {/* Upload progress bar */}
+                  {isUploading && (
+                    <div className="mt-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div 
+                          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {uploadProgress}% complete
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Upload error message */}
+                  {uploadError && (
+                    <div className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      {uploadError}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Search bar */}
+                <div className="flex-1 w-full">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <FiSearch className="text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <input 
+                      type="search" 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search files..." 
+                      className="block w-full p-3 pl-10 text-sm bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      >
+                        <span className="text-gray-500 dark:text-gray-400">&times;</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Files table */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                {/* Table header */}
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-12 gap-2 sm:gap-4 font-medium text-gray-600 dark:text-gray-300">
+                  <div className="col-span-7 md:col-span-6 pl-1">File Name</div>
+                  <div className="hidden sm:block col-span-3">Size</div>
+                  <div className="col-span-5 sm:col-span-3 text-right sm:text-left">Actions</div>
+                </div>
+                
+                {/* Loading state */}
+                {isLoading ? (
+                  <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <div className="flex justify-center items-center">
+                      <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Loading files...
+                    </div>
+                  </div>
+                ) : (
+                  /* Table body */
+                  filteredFiles.length === 0 ? (
+                    <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                      {searchQuery ? 'No files match your search.' : 'No files uploaded yet. Click the Upload button to add files.'}
+                    </div>
+                  ) : (
+                    filteredFiles.map(file => (
+                      <div key={file.id} className="border-b border-gray-200 dark:border-gray-700 last:border-0">
+                        {/* Main file row */}
+                        <div className="px-4 sm:px-6 py-3 sm:py-4 grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                          <div className="col-span-7 md:col-span-6 font-medium text-gray-800 dark:text-gray-200 truncate pl-1">
+                            {file.name}
+                          </div>
+                          <div className="hidden sm:block col-span-3 text-gray-600 dark:text-gray-400">
+                            {formatFileSize(file.size)}
+                          </div>
+                          <div className="col-span-5 sm:col-span-3 flex items-center justify-end sm:justify-start space-x-1 sm:space-x-2">
+                            {/* Toggle access button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleFileAccess(file.id)}
+                              className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
+                                file.isPublic 
+                                  ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
+                                  : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                              }`}
+                              aria-label={file.isPublic ? 'Make private' : 'Make public'}
+                              title={file.isPublic ? 'Public - Click to make private' : 'Private - Click to make public'}
+                            >
+                              {file.isPublic ? <FiToggleRight size={18} className="sm:w-5 sm:h-5" /> : <FiToggleLeft size={18} className="sm:w-5 sm:h-5" />}
+                            </button>
+                            
+                            {/* Delete button */}
+                            <button
+                              type="button"
+                              onClick={() => deleteFile(file.id)}
+                              className="p-1.5 sm:p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
+                              aria-label="Delete file"
+                              title="Delete file"
+                            >
+                              <FiTrash2 size={18} className="sm:w-5 sm:h-5" />
+                            </button>
+                            
+                            {/* Expand/collapse button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleAccessRow(file.id)}
+                              className="p-1.5 sm:p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
+                              aria-label={expandedFileId === file.id ? 'Hide access options' : 'Show access options'}
+                              title="Access options"
+                            >
+                              {expandedFileId === file.id ? <FiChevronUp size={18} className="sm:w-5 sm:h-5" /> : <FiChevronDown size={18} className="sm:w-5 sm:h-5" />}
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* Access sub-table */}
+                        {expandedFileId === file.id && (
+                          <div className="bg-gray-50 dark:bg-gray-800 px-3 sm:px-6 py-3 sm:py-4 mx-2 sm:ml-8 sm:mr-4 mb-3 sm:mb-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 space-y-2 sm:space-y-0">
+                              <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">
+                                Access Controls
+                              </h3>
+                              <button
+                                type="button"
+                                onClick={() => openAddAccessModal(file.id)}
+                                className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm w-full sm:w-auto justify-center sm:justify-start"
+                              >
+                                <FiPlus className="mr-1" /> Add Access
+                              </button>
+                            </div>
+                            
+                            {file.accesses.length === 0 ? (
+                              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                                No access links created yet. Click "Add Access" to create one.
+                              </div>
+                            ) : (
+                              <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                {/* Access table header - visible only on tablet and larger */}
+                                <div className="hidden sm:grid grid-cols-12 gap-4 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300">
+                                  <div className="col-span-4">Name</div>
+                                  <div className="col-span-5">Configuration</div>
+                                  <div className="col-span-3">Actions</div>
+                                </div>
+                                
+                                {/* Access table rows */}
+                                {file.accesses.map(access => (
+                                  <div 
+                                    key={access.id} 
+                                    className="sm:grid grid-cols-12 gap-4 px-3 sm:px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-sm flex flex-col sm:items-center"
+                                  >
+                                    <div className="col-span-4 font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-0">
+                                      {access.name}
+                                    </div>
+                                    <div className="col-span-5 text-gray-600 dark:text-gray-400 mb-3 sm:mb-0">
+                                      <div className="space-y-1">
+                                        <div className="flex items-center">
+                                          <FiGlobe className="mr-1 flex-shrink-0" />
+                                          <span>{access.public ? 'Public' : 'Private'}</span>
+                                        </div>
+                                        {access.oneTimeUse && (
+                                          <div className="flex items-center">
+                                            <FiShield className="mr-1 flex-shrink-0" />
+                                            <span>One-Time Use</span>
+                                          </div>
+                                        )}
+                                        {access.enableTTL && (
+                                          <div className="flex items-center">
+                                            <FiClock className="mr-1 flex-shrink-0" />
+                                            <span>TTL: {access.ttl} min</span>
+                                          </div>
+                                        )}
+                                        <div className="flex items-center">
+                                          <FiCalendar className="mr-1 flex-shrink-0" />
+                                          <span className="truncate" title={formatExpirationDate(access.expires)}>
+                                            Expires: {formatExpirationDate(access.expires)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-3 flex items-center space-x-2 justify-start sm:justify-start">
+                                      {/* Toggle access button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleAccessActive(file.id, access.id)}
+                                        className={`p-1.5 rounded transition-colors ${
+                                          access.public 
+                                            ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
+                                            : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                        }`}
+                                        aria-label={access.public ? 'Make private' : 'Make public'}
+                                        title={access.public ? 'Public - Click to make private' : 'Private - Click to make public'}
+                                      >
+                                        {access.public ? <FiToggleRight size={18} /> : <FiToggleLeft size={18} />}
+                                      </button>
+                                      
+                                      {/* Copy link button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => copyAccessLink(access.link)}
+                                        className="p-1.5 rounded bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
+                                        aria-label="Copy link"
+                                        title="Copy link"
+                                      >
+                                        <FiCopy size={18} />
+                                      </button>
+                                      
+                                      {/* Edit access button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => openEditAccessModal(file.id, access)}
+                                        disabled={isFetchingAccess}
+                                        className="p-1.5 rounded bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-400 dark:hover:bg-yellow-800 transition-colors disabled:opacity-50"
+                                        aria-label="Edit access"
+                                        title="Edit access"
+                                      >
+                                        {isFetchingAccess ? (
+                                          <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
+                                        ) : (
+                                          <FiEdit size={18} />
+                                        )}
+                                      </button>
+                                      
+                                      {/* Delete access button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => deleteAccess(file.id, access.id)}
+                                        className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
+                                        aria-label="Delete access"
+                                        title="Delete access"
+                                      >
+                                        <FiTrash2 size={18} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )
+                )}
+              </div>
+              
+              {/* Refresh button */}
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={fetchFiles}
+                  className="px-4 py-2 flex items-center text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Refresh Files
+                </button>
+              </div>
+            </>
+          )}
+
           {/* Toast notifications */}
           <div className="fixed bottom-4 right-4 z-50 space-y-2">
             {toasts.map(toast => (
@@ -709,224 +938,6 @@ const SharePage: React.FC = () => {
                 </button>
               </div>
             ))}
-          </div>
-          
-          {/* Files table */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            {/* Table header */}
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-12 gap-2 sm:gap-4 font-medium text-gray-600 dark:text-gray-300">
-              <div className="col-span-7 md:col-span-6 pl-1">File Name</div>
-              <div className="hidden sm:block col-span-3">Size</div>
-              <div className="col-span-5 sm:col-span-3 text-right sm:text-left">Actions</div>
-            </div>
-            
-            {/* Loading state */}
-            {isLoading ? (
-              <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                <div className="flex justify-center items-center">
-                  <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Loading files...
-                </div>
-              </div>
-            ) : (
-              /* Table body */
-              filteredFiles.length === 0 ? (
-                <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                  {searchQuery ? 'No files match your search.' : 'No files uploaded yet. Click the Upload button to add files.'}
-                </div>
-              ) : (
-                filteredFiles.map(file => (
-                  <div key={file.id} className="border-b border-gray-200 dark:border-gray-700 last:border-0">
-                    {/* Main file row */}
-                    <div className="px-4 sm:px-6 py-3 sm:py-4 grid grid-cols-12 gap-2 sm:gap-4 items-center">
-                      <div className="col-span-7 md:col-span-6 font-medium text-gray-800 dark:text-gray-200 truncate pl-1">
-                        {file.name}
-                      </div>
-                      <div className="hidden sm:block col-span-3 text-gray-600 dark:text-gray-400">
-                        {formatFileSize(file.size)}
-                      </div>
-                      <div className="col-span-5 sm:col-span-3 flex items-center justify-end sm:justify-start space-x-1 sm:space-x-2">
-                        {/* Toggle access button */}
-                        <button
-                          type="button"
-                          onClick={() => toggleFileAccess(file.id)}
-                          className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
-                            file.isPublic 
-                              ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
-                              : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                          }`}
-                          aria-label={file.isPublic ? 'Make private' : 'Make public'}
-                          title={file.isPublic ? 'Public - Click to make private' : 'Private - Click to make public'}
-                        >
-                          {file.isPublic ? <FiToggleRight size={18} className="sm:w-5 sm:h-5" /> : <FiToggleLeft size={18} className="sm:w-5 sm:h-5" />}
-                        </button>
-                        
-                        {/* Delete button */}
-                        <button
-                          type="button"
-                          onClick={() => deleteFile(file.id)}
-                          className="p-1.5 sm:p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
-                          aria-label="Delete file"
-                          title="Delete file"
-                        >
-                          <FiTrash2 size={18} className="sm:w-5 sm:h-5" />
-                        </button>
-                        
-                        {/* Expand/collapse button */}
-                        <button
-                          type="button"
-                          onClick={() => toggleAccessRow(file.id)}
-                          className="p-1.5 sm:p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
-                          aria-label={expandedFileId === file.id ? 'Hide access options' : 'Show access options'}
-                          title="Access options"
-                        >
-                          {expandedFileId === file.id ? <FiChevronUp size={18} className="sm:w-5 sm:h-5" /> : <FiChevronDown size={18} className="sm:w-5 sm:h-5" />}
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Access sub-table */}
-                    {expandedFileId === file.id && (
-                      <div className="bg-gray-50 dark:bg-gray-800 px-3 sm:px-6 py-3 sm:py-4 mx-2 sm:ml-8 sm:mr-4 mb-3 sm:mb-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 space-y-2 sm:space-y-0">
-                          <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">
-                            Access Controls
-                          </h3>
-                          <button
-                            type="button"
-                            onClick={() => openAddAccessModal(file.id)}
-                            className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm w-full sm:w-auto justify-center sm:justify-start"
-                          >
-                            <FiPlus className="mr-1" /> Add Access
-                          </button>
-                        </div>
-                        
-                        {file.accesses.length === 0 ? (
-                          <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                            No access links created yet. Click "Add Access" to create one.
-                          </div>
-                        ) : (
-                          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-                            {/* Access table header - visible only on tablet and larger */}
-                            <div className="hidden sm:grid grid-cols-12 gap-4 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300">
-                              <div className="col-span-4">Name</div>
-                              <div className="col-span-5">Configuration</div>
-                              <div className="col-span-3">Actions</div>
-                            </div>
-                            
-                            {/* Access table rows */}
-                            {file.accesses.map(access => (
-                              <div 
-                                key={access.id} 
-                                className="sm:grid grid-cols-12 gap-4 px-3 sm:px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-sm flex flex-col sm:items-center"
-                              >
-                                <div className="col-span-4 font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-0">
-                                  {access.name}
-                                </div>
-                                <div className="col-span-5 text-gray-600 dark:text-gray-400 mb-3 sm:mb-0">
-                                  <div className="space-y-1">
-                                    <div className="flex items-center">
-                                      <FiGlobe className="mr-1 flex-shrink-0" />
-                                      <span>{access.public ? 'Public' : 'Private'}</span>
-                                    </div>
-                                    {access.oneTimeUse && (
-                                      <div className="flex items-center">
-                                        <FiShield className="mr-1 flex-shrink-0" />
-                                        <span>One-Time Use</span>
-                                      </div>
-                                    )}
-                                    {access.enableTTL && (
-                                      <div className="flex items-center">
-                                        <FiClock className="mr-1 flex-shrink-0" />
-                                        <span>TTL: {access.ttl} min</span>
-                                      </div>
-                                    )}
-                                    <div className="flex items-center">
-                                      <FiCalendar className="mr-1 flex-shrink-0" />
-                                      <span className="truncate" title={formatExpirationDate(access.expires)}>
-                                        Expires: {formatExpirationDate(access.expires)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-span-3 flex items-center space-x-2 justify-start sm:justify-start">
-                                  {/* Toggle access button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleAccessActive(file.id, access.id)}
-                                    className={`p-1.5 rounded transition-colors ${
-                                      access.public 
-                                        ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
-                                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                                    }`}
-                                    aria-label={access.public ? 'Make private' : 'Make public'}
-                                    title={access.public ? 'Public - Click to make private' : 'Private - Click to make public'}
-                                  >
-                                    {access.public ? <FiToggleRight size={18} /> : <FiToggleLeft size={18} />}
-                                  </button>
-                                  
-                                  {/* Copy link button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => copyAccessLink(access.link)}
-                                    className="p-1.5 rounded bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
-                                    aria-label="Copy link"
-                                    title="Copy link"
-                                  >
-                                    <FiCopy size={18} />
-                                  </button>
-                                  
-                                  {/* Edit access button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => openEditAccessModal(file.id, access)}
-                                    disabled={isFetchingAccess}
-                                    className="p-1.5 rounded bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-400 dark:hover:bg-yellow-800 transition-colors disabled:opacity-50"
-                                    aria-label="Edit access"
-                                    title="Edit access"
-                                  >
-                                    {isFetchingAccess ? (
-                                      <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
-                                    ) : (
-                                      <FiEdit size={18} />
-                                    )}
-                                  </button>
-                                  
-                                  {/* Delete access button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => deleteAccess(file.id, access.id)}
-                                    className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800 transition-colors"
-                                    aria-label="Delete access"
-                                    title="Delete access"
-                                  >
-                                    <FiTrash2 size={18} />
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))
-              )
-            )}
-          </div>
-          
-          {/* Refresh button */}
-          <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={fetchFiles}
-              className="px-4 py-2 flex items-center text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh Files
-            </button>
           </div>
         </div>
       </div>

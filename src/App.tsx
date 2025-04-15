@@ -13,8 +13,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Landing/>} />
-          <Route path="/Auth" element={<Auth/>} />
-          <Route path="/Share" element={<Share/>} />
+          <Route path="/auth" element={<Auth/>} />
+          <Route path="/share" element={<Share/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>      
       </Router>
