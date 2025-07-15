@@ -1,21 +1,25 @@
 # Security Policy
 
+Thank you for helping to keep DefDrive secure!
+
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+We aim to support the latest stable version of DefDrive.  
+Please update to the latest release for the newest security fixes.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+If you discover a security vulnerability, please **do not** open a public issue.  
+Instead, report it privately to the project maintainer:
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+- Email: [your-email@example.com] (replace with your contact info)
+- Or open a private GitHub security advisory
+
+Please provide as much detail as possible so we can quickly address the issue.
+
+## Responsible Disclosure
+
+We appreciate responsible disclosure.  
+We will investigate and respond to all legitimate reports as quickly as possible.
+
+Thank you for helping us keep DefDrive safe!
