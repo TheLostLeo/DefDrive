@@ -12,7 +12,7 @@ Please update to the latest release for the newest security fixes.
 If you discover a security vulnerability, please **do not** open a public issue.  
 Instead, report it privately to the project maintainer:
 
-- Email: [joelantobk@gmail.com] 
+- Email: [ankitprasad2005@gmail.com] 
 - Or open a private GitHub security advisory
 
 Please provide as much detail as possible so we can quickly address the issue.
