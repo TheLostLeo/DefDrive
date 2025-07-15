@@ -25,7 +25,7 @@ DefDrive enables users to upload files and generate secure, shareable links. Acc
 ## Technologies Used
 
 - **TypeScript**
-- **JavaScript**
+- **Vite**
 - Other supporting libraries and frameworks
 
 ## Backend
